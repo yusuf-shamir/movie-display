@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './Movies.css';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 import axios from 'axios';
 
@@ -21,17 +23,17 @@ class Movies extends Component {
     const movieList = this.state.movies.length ? (
       this.state.movies.map(movie => {
         return (
-          <div key={movie.name}>{movie.name}</div>
+          <ListItem button key={movie.name}>{movie.name}</ListItem>
         )
       })
 
     ) : (
-        <div> error</div>
+        <div>error</div>
       )
     return (
-      <div>
+      <List>
         {movieList}
-      </div>
+      </List>
     )
   }
 }
