@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './Movies.css';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import axios from 'axios';
 
@@ -20,13 +22,13 @@ class Movies extends Component {
   }
 
   render() {
-    const movieList = this.state.movies.length ? (
-      this.state.movies.map(movie => {
+    const { movies } = this.props
+    const movieList = movies.length ? (
+      movies.map(movie => {
         return (
-          <ListItem button key={movie.name}>{movie.name}</ListItem>
+          <Link to="/movie" movie={movie}><ListItem button key={movie.name}>{movie.name}</ListItem></Link>
         )
       })
-
     ) : (
         <div>error</div>
       )
@@ -38,4 +40,10 @@ class Movies extends Component {
   }
 }
 
-export default Movies;
+const mapper = (state) => {
+  return {
+    movies: state.movies
+  }
+}
+
+export default connect(mapper)(Movies);
