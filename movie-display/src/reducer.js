@@ -1,9 +1,8 @@
 const initialState = {
   movies: null,
   error: null,
-  byGenre: null,
-  byYear: null,
-  genre: ""
+  genre: "",
+  years: [2000, 2020]
 }
 
 const reducer = (state = initialState, action) => {
@@ -11,9 +10,7 @@ const reducer = (state = initialState, action) => {
     case 'FETCH_MOVIES_SUCCESS':
       return {
         ...state,
-        movies: action.movies,
-        byGenre: { 'sport': [3] },
-        byYear: { 2010: [4] },
+        movies: action.movies
       }
     case 'FETCH_MOVIES_ERROR':
       return {
@@ -24,6 +21,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         genre: action.genre
+      }
+    case 'CHANGE_YEARS':
+      return {
+        ...state,
+        years: action.years
       }
     default:
       return state
