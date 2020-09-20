@@ -12,8 +12,16 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
+import { sizing } from '@material-ui/system';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
+
+import Grid from '@material-ui/core/Grid';
 
 import axios from 'axios';
+import _ from 'lodash';
 
 class Movies extends Component {
 
@@ -33,10 +41,19 @@ class Movies extends Component {
 
     const { movies, genre, years } = this.props
 
-    const movieList = (movies !== null) ? (
-      Object.entries(movies).map((movie) => {
+    const movieGrid = (movies !== null) ? (
+      movies.map((movie) => {
         return (
-          <Link to={`/movie/${movie[0]}`}><ListItem button key={movie[0]}>{movie[1].name}</ListItem></Link>
+          <Grid item key={movie.index} xs={12} sm={4}>
+            <Card variant="outlined">
+              <CardContent>
+                <div className="movie-poster">{movie.name}</div>
+              </CardContent>
+              <CardActions>
+                <Button style={{ "text-transform": "none" }} to={`/movie/${movie.index}`} component={Link}>Read more</Button>
+              </CardActions>
+            </Card>
+          </Grid>
         )
       })
     ) : (
@@ -48,6 +65,7 @@ class Movies extends Component {
           Year range
         </Typography>
         <Slider
+          style={{ width: "calc(100% - 20px)" }}
           onChange={changeYears}
           value={years}
           min={2000}
@@ -70,9 +88,9 @@ class Movies extends Component {
           <MenuItem value={'Action'}>Action</MenuItem>
           <MenuItem value={'Adventure'}>Adventure</MenuItem>
         </Select>
-        <List>
-          {movieList}
-        </List>
+        <Grid container spacing={4} style={{ height: "400px" }}>
+          {movieGrid}
+        </Grid>
       </div>
     )
   }
@@ -109,7 +127,9 @@ function changeYears(years) {
 function fetchMoviesAction() {
   return dispatch => {
     axios.get('https://sometimes-maybe-flaky-api.gdshive.io').then(res => {
-      dispatch(fetchMoviesSuccess(res.data))
+      dispatch(fetchMoviesSuccess(_.map(res.data, (elem, i) => {
+        return _.extend({ index: i + 1 }, elem)
+      })))
     }).catch(error => {
       dispatch(fetchMoviesError(error))
     })

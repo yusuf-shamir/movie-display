@@ -6,23 +6,35 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import axios from 'axios';
+import _ from 'lodash';
 
 class Movie extends Component {
   render() {
     const { movie } = this.props;
-    return (
+
+
+    const movieDisplay = (movie !== null) ? (
       <div>
         <div>{movie.name}</div>
         <div>{movie.productionYear}</div>
         <div>{movie.productionYear}</div>
+      </div>
+    ) : (
+        <div>Movie not found</div>
+      )
+
+    return (
+      <div>
+        {movieDisplay}
       </div>
     )
   }
 }
 
 const mapStateToProps = (state, selfProps) => {
+  const movie = _.find(state.movies, { index: parseInt(selfProps.match.params.id) })
   return {
-    movie: state.movies[selfProps.match.params.id]
+    movie: movie ? movie : null
   }
 }
 

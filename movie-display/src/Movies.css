@@ -1,0 +1,8 @@
+.movie-poster {
+    background-color: #f1f1f1;
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
