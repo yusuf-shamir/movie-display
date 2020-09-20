@@ -12,7 +12,7 @@ function App() {
       <div className="App">
         <header className="App-header">
           <Route exact path="/" component={Movies} />
-          <Route exact path="/movie" component={Movie} />
+          <Route exact path="/movie/:id" component={Movie} />
         </header>
       </div>
     </BrowserRouter>
