@@ -11,16 +11,16 @@ import Toolbar from '@material-ui/core/Toolbar';
 
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
-
+import HomeIcon from '@material-ui/icons/Home';
 import { Link } from 'react-router-dom';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <AppBar style={{ "background-color": "#000000" }}>
+        <AppBar style={{ "backgroundColor": "rgba(0,0,0,0.05)" }}>
           <Toolbar>
-            <Button to={'/'} variant="contained" component={Link}>Home</Button>
+            <Button to={'/'} component={Link}><HomeIcon /></Button>
           </Toolbar>
         </AppBar>
         <Container id="wrapper" maxWidth="md">

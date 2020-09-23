@@ -6,3 +6,17 @@
     justify-content: center;
     align-items: center;
 }
+
+.synopsis-short{
+    font-size: 0.8em;
+    line-height: 150%;
+    text-align: left;
+    color: #999999;
+}
+#filter-container{
+    margin-bottom: 20px;
+}
+
+#range-year{
+    width: 100%;
+}

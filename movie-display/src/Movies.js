@@ -5,28 +5,34 @@ import ListItem from '@material-ui/core/ListItem';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
-import InputLabel from '@material-ui/core/InputLabel';
+import fetchMoviesAction from './actions'
 import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
-import { sizing } from '@material-ui/system';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Chip from '@material-ui/core/Chip';
 
 import Grid from '@material-ui/core/Grid';
-
-import axios from 'axios';
-import _ from 'lodash';
 
 class Movies extends Component {
 
   componentDidMount() {
-    this.props.fetchMovies()
+    const { movies } = this.props;
+
+    if (!movies) {
+      this.props.fetchMovies()
+    }
   }
 
   render() {
@@ -39,18 +45,21 @@ class Movies extends Component {
       this.props.changeYears(newValue)
     }
 
-    const { movies, genre, years } = this.props
+    const { movies, genre, years, loading } = this.props
 
-    const movieGrid = (movies !== null) ? (
+    const movieGrid = loading ? (<div className="load-screen"><CircularProgress /></div>) : ((movies !== null) ? (
       movies.map((movie) => {
         return (
           <Grid item key={movie.index} xs={12} sm={4}>
             <Card variant="outlined">
               <CardContent>
                 <div className="movie-poster">{movie.name}</div>
+                <p className="synopsis-short">{movie.synopsisShort}</p>
+                <Chip className="tag" label={movie.productionYear} />
+                <Chip className="tag" label={movie.genre} />
               </CardContent>
               <CardActions>
-                <Button style={{ "text-transform": "none" }} to={`/movie/${movie.index}`} component={Link}>Read more</Button>
+                <Button style={{ "textTransform": "none" }} to={`/movie/${movie.index}`} component={Link}>Read more</Button>
               </CardActions>
             </Card>
           </Grid>
@@ -58,55 +67,57 @@ class Movies extends Component {
       })
     ) : (
         <div>There are no movies to be displayed</div>
-      )
+      ))
     return (
       <div>
-        <Typography id="range-year" gutterBottom>
-          Year range
-        </Typography>
-        <Slider
-          style={{ width: "calc(100% - 20px)" }}
-          onChange={changeYears}
-          value={years}
-          min={2000}
-          max={2020}
-          defaultValue={[2000, 2020]}
-          valueLabelDisplay="auto"
-          aria-labelledby="range-year"
-        />
-        <Typography id="select-genre" gutterBottom>
-          Genre
-        </Typography>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={genre}
-          onChange={changeGenre}
-          aria-labelledby="select-genre"
-        >
-          <MenuItem value={''}></MenuItem>
-          <MenuItem value={'Action'}>Action</MenuItem>
-          <MenuItem value={'Adventure'}>Adventure</MenuItem>
-        </Select>
+        <Accordion id="filter-container">
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+          >
+            <Typography>Filters</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <List style={{ width: "calc(100% - 20px)" }}>
+              <ListItem>
+                <Typography id="range-year" gutterBottom>
+                  Production year range
+              </Typography><hr />
+                <Slider
+                  style={{ width: "calc(100% - 20px)" }}
+                  onChange={changeYears}
+                  value={years}
+                  min={2000}
+                  max={2020}
+                  defaultValue={[2000, 2020]}
+                  valueLabelDisplay="auto"
+                  aria-labelledby="range-year"
+                />
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <Typography id="select-genre" gutterBottom>
+                  Genre
+              </Typography><hr />
+                <Select
+                  style={{ width: "200px" }}
+                  value={genre}
+                  onChange={changeGenre}
+                >
+                  <MenuItem value={''}>All</MenuItem>
+                  <MenuItem value={'Action'}>Action</MenuItem>
+                  <MenuItem value={'Adventure'}>Adventure</MenuItem>
+                  <MenuItem value={'Animation'}>Animation</MenuItem>
+                  <MenuItem value={'Comedy'}>Comedy</MenuItem>
+                  <MenuItem value={'Fantasy'}>Fantasy</MenuItem>
+                </Select></ListItem>
+            </List>
+          </AccordionDetails>
+        </Accordion>
         <Grid container spacing={4} style={{ height: "400px" }}>
           {movieGrid}
         </Grid>
       </div>
     )
-  }
-}
-
-function fetchMoviesSuccess(movies) {
-  return {
-    type: 'FETCH_MOVIES_SUCCESS',
-    movies: movies
-  }
-}
-
-function fetchMoviesError(error) {
-  return {
-    type: 'FETCH_MOVIES_ERROR',
-    error: error
   }
 }
 
@@ -124,18 +135,6 @@ function changeYears(years) {
   }
 }
 
-function fetchMoviesAction() {
-  return dispatch => {
-    axios.get('https://sometimes-maybe-flaky-api.gdshive.io').then(res => {
-      dispatch(fetchMoviesSuccess(_.map(res.data, (elem, i) => {
-        return _.extend({ index: i + 1 }, elem)
-      })))
-    }).catch(error => {
-      dispatch(fetchMoviesError(error))
-    })
-  }
-}
-
 function changeGenreAction(genre) {
   return dispatch => {
     dispatch(changeGenre(genre))
@@ -149,16 +148,11 @@ function changeYearsAction(years) {
 }
 
 const mapStateToProps = (state, selfProps) => {
-  if (state.movies) {
-    return {
-      genre: state.genre,
-      years: state.years,
-      movies: state.movies.filter(movie => state.genre ? movie.genre === state.genre : true).filter(movie => movie.productionYear >= state.years[0] && movie.productionYear <= state.years[1])
-    }
-  } else {
-    return {
-      movies: null
-    }
+  return {
+    genre: state.genre,
+    years: state.years,
+    loading: state.loading,
+    movies: state.movies ? state.movies.filter(movie => state.genre ? movie.genre === state.genre : true).filter(movie => movie.productionYear >= state.years[0] && movie.productionYear <= state.years[1]) : state.movies
   }
 }
 
