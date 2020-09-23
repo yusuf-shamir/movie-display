@@ -21,7 +21,6 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Chip from '@material-ui/core/Chip';
 
 import Grid from '@material-ui/core/Grid';
 
@@ -50,13 +49,15 @@ class Movies extends Component {
     const movieGrid = loading ? (<div className="load-screen"><CircularProgress /></div>) : ((movies !== null) ? (
       movies.map((movie) => {
         return (
-          <Grid item key={movie.index} xs={12} sm={4}>
+          <Grid item key={movie.index} xs={12} md={4} sm={6}>
             <Card variant="outlined">
               <CardContent>
                 <div className="movie-poster">{movie.name}</div>
                 <p className="synopsis-short">{movie.synopsisShort}</p>
-                <Chip className="tag" label={movie.productionYear} />
-                <Chip className="tag" label={movie.genre} />
+                <div className="tag-container">
+                  <div className="tag">{movie.productionYear}</div>
+                  <div className="tag">{movie.genre}</div>
+                </div>
               </CardContent>
               <CardActions>
                 <Button style={{ "textTransform": "none" }} to={`/movie/${movie.index}`} component={Link}>Read more</Button>

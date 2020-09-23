@@ -8,7 +8,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import parse from 'html-react-parser';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Chip from '@material-ui/core/Chip';
 
 import { animateScroll as scroll } from 'react-scroll'
 
@@ -30,8 +29,10 @@ class Movie extends Component {
       <div className="movie-container">
         <Paper className="paper">
           <Typography variant="h3">{movie.name}</Typography>
-          <Chip className="tag" label={movie.productionYear} />
-          <Chip className="tag" label={movie.genre} />
+          <div className="tag-container">
+            <div className="tag">{movie.productionYear}</div>
+            <div className="tag">{movie.genre}</div>
+          </div>
           <Typography>{parse(movie.synopsis)}</Typography>
         </Paper>
       </div>

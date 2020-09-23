@@ -7,16 +7,17 @@
     align-items: center;
 }
 
-.synopsis-short{
+.synopsis-short {
     font-size: 0.8em;
     line-height: 150%;
     text-align: left;
     color: #999999;
 }
-#filter-container{
+
+#filter-container {
     margin-bottom: 20px;
 }
 
-#range-year{
+#range-year {
     width: 100%;
 }
