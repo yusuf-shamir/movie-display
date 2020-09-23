@@ -44,31 +44,37 @@ class Movies extends Component {
       this.props.changeYears(newValue)
     }
 
-    const { movies, genre, years, loading } = this.props
+    const { movies, genre, years, loading, error } = this.props
 
-    const movieGrid = loading ? (<div className="load-screen"><CircularProgress /></div>) : ((movies !== null) ? (
-      movies.map((movie) => {
-        return (
-          <Grid item key={movie.index} xs={12} md={4} sm={6}>
-            <Card variant="outlined">
-              <CardContent>
-                <div className="movie-poster">{movie.name}</div>
-                <p className="synopsis-short">{movie.synopsisShort}</p>
-                <div className="tag-container">
-                  <div className="tag">{movie.productionYear}</div>
-                  <div className="tag">{movie.genre}</div>
-                </div>
-              </CardContent>
-              <CardActions>
-                <Button style={{ "textTransform": "none" }} to={`/movie/${movie.index}`} component={Link}>Read more</Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        )
-      })
-    ) : (
-        <div>There are no movies to be displayed</div>
-      ))
+    let movieGrid;
+
+    if (error) {
+      movieGrid = (<div className="load-screen">Please close this tab and try again or click on the refresh button in the browser.</div>)
+    } else {
+      movieGrid = loading ? (<div className="load-screen"><CircularProgress /></div>) : ((movies !== null) ? (
+        movies.map((movie) => {
+          return (
+            <Grid item key={movie.index} xs={12} md={4} sm={6}>
+              <Card variant="outlined">
+                <CardContent>
+                  <div className="movie-poster">{movie.name}</div>
+                  <p className="synopsis-short">{movie.synopsisShort}</p>
+                  <div className="tag-container">
+                    <div className="tag">{movie.productionYear}</div>
+                    <div className="tag">{movie.genre}</div>
+                  </div>
+                </CardContent>
+                <CardActions>
+                  <Button style={{ "textTransform": "none" }} to={`/movie/${movie.index}`} component={Link}>Read more</Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          )
+        })
+      ) : (
+          <div className="load-screen">There are no movies to be displayed</div>
+        ))
+    }
     return (
       <div>
         <Accordion id="filter-container">
@@ -153,6 +159,7 @@ const mapStateToProps = (state, selfProps) => {
     genre: state.genre,
     years: state.years,
     loading: state.loading,
+    error: state.error,
     movies: state.movies ? state.movies.filter(movie => state.genre ? movie.genre === state.genre : true).filter(movie => movie.productionYear >= state.years[0] && movie.productionYear <= state.years[1]) : state.movies
   }
 }

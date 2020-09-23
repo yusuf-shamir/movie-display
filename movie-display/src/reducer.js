@@ -17,6 +17,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         movies: action.movies,
+        error: null,
         loading: false
       }
     case 'FETCH_MOVIES_ERROR':

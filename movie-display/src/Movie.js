@@ -23,23 +23,28 @@ class Movie extends Component {
   }
 
   render() {
-    const { movie, loading } = this.props;
+    const { movie, loading, error } = this.props;
 
-    const movieDisplay = loading ? (<div className="load-screen"><CircularProgress /></div>) : ((movie !== null) ? (
-      <div className="movie-container">
-        <Paper className="paper">
-          <Typography variant="h3">{movie.name}</Typography>
-          <div className="tag-container">
-            <div className="tag">{movie.productionYear}</div>
-            <div className="tag">{movie.genre}</div>
-          </div>
-          <Typography>{parse(movie.synopsis)}</Typography>
-        </Paper>
-      </div>
-    ) : (
-        <div>Movie not found</div>
-      ))
+    let movieDisplay
 
+    if (error) {
+      movieDisplay = (<div className="load-screen">Please close this tab and try again or click on the refresh button in the browser.</div>)
+    } else {
+      movieDisplay = loading ? (<div className="load-screen"><CircularProgress /></div>) : ((movie !== null) ? (
+        <div className="movie-container">
+          <Paper className="paper">
+            <Typography variant="h3">{movie.name}</Typography>
+            <div className="tag-container">
+              <div className="tag">{movie.productionYear}</div>
+              <div className="tag">{movie.genre}</div>
+            </div>
+            <Typography>{parse(movie.synopsis)}</Typography>
+          </Paper>
+        </div>
+      ) : (
+          <div className="load-screen">Movie not found</div>
+        ))
+    }
     return (
       <div>
         {movieDisplay}
@@ -53,6 +58,7 @@ const mapStateToProps = (state, selfProps) => {
   return {
     movies: state.movies,
     loading: state.loading,
+    error: state.error,
     movie: movie ? movie : null
   }
 }
